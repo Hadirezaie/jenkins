@@ -2,21 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Info') {
+        stage('Start') {
             steps {
-                echo 'Pipeline started from Jenkinsfile'
+                echo 'شروع pipeline'
             }
         }
 
-        stage('Show Files') {
+        stage('Build') {
             steps {
-                sh 'ls -la'
+                sh 'echo "Building project..."'
             }
         }
 
-        stage('Read File') {
+        stage('Test') {
             steps {
-                sh 'cat README.md'
+                sh 'echo "Running tests..."'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying..."'
             }
         }
     }
