@@ -2,28 +2,44 @@ pipeline {
     agent any
 
     stages {
-        stage('Start') {
+        stage('Checkout') {
             steps {
-                echo 'شروع pipeline'
+                echo 'Getting source code from Git...'
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                sh 'echo "Building project..."'
+                echo 'Building project with Maven...'
+                sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'echo "Running tests..."'
+                echo 'Running tests...'
+                sh 'mvn test'
             }
         }
 
-        stage('Deploy') {
+        stage('Package') {
             steps {
-                sh 'echo "Deploying..."'
+                echo 'Packaging application...'
+                sh 'mvn package'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline finished successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+        always {
+            echo 'Pipeline execution is complete.'
         }
     }
 }
