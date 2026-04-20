@@ -4,6 +4,10 @@ pipeline {
     tools {
         maven 'Maven'
     }
+    environment {
+        IMAGE_NAME = 'java-demo-app'
+        IMAGE_TAG = 'latest'
+    }
 
     stages {
         stage('Checkout') {
@@ -13,38 +17,35 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Jar') {
             steps {
-                echo 'Building project with Maven...'
-                sh 'mvn clean compile'
+                sh 'mvn clean package'
             }
         }
 
-        stage('Test') {
+        stage('Archive Artifact') {
             steps {
-                echo 'Running tests...'
-                sh 'mvn test'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
 
-        stage('Package') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Packaging application...'
-                sh 'mvn package'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
             }
         }
     }
 
+
     post {
         success {
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            echo 'Build, test, and packaging completed successfully.'
+            echo 'JAR built and Docker image created successfully.'
         }
         failure {
-            echo 'Pipeline failed. Check the logs.'
+            echo 'Pipeline failed.'
         }
         always {
-            echo 'Execution completed.'
+            echo 'Pipeline execution completed.'
         }
     }
 }
