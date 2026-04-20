@@ -1,38 +1,35 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.6-eclipse-temurin-17'
-        }
+    agent any
+
+    tools {
+        maven 'Maven'
     }
 
     stages {
         stage('Checkout') {
             steps {
+                echo 'Getting source code from Git...'
                 checkout scm
-            }
-        }
-
-        stage('Environment Check') {
-            steps {
-                sh 'java -version'
-                sh 'mvn -version'
             }
         }
 
         stage('Build') {
             steps {
+                echo 'Building project with Maven...'
                 sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running tests...'
                 sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
+                echo 'Packaging application...'
                 sh 'mvn package'
             }
         }
