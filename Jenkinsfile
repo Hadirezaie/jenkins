@@ -1,35 +1,38 @@
 pipeline {
-    agent any
-
-    tools {
-        maven 'Maven'
+    agent {
+        docker {
+            image 'maven:3.9.6-eclipse-temurin-17'
+        }
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo 'Getting source code from Git...'
                 checkout scm
+            }
+        }
+
+        stage('Environment Check') {
+            steps {
+                sh 'java -version'
+                sh 'mvn -version'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building project with Maven...'
                 sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
                 sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
-                echo 'Packaging application...'
                 sh 'mvn package'
             }
         }
@@ -37,13 +40,14 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline finished successfully.'
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            echo 'Build, test, and packaging completed successfully.'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'Pipeline failed. Check the logs.'
         }
         always {
-            echo 'Pipeline execution is complete.'
+            echo 'Execution completed.'
         }
     }
 }
