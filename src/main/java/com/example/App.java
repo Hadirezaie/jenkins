@@ -6,6 +6,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(greet("\n\n Jenkins \n\n"));
+        System.out.println(greet("\n\n Hello Jenkins \n\n"));
     }
 }
